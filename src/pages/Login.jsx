@@ -1,32 +1,72 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useContext } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../providers/AuthProvider';
-
+import Swal from 'sweetalert2'
 const Login = () => {
-    const {loginUser, googleSignIn} = useContext(AuthContext);
+    const { loginUser, googleSignIn } = useContext(AuthContext);
+    const location = useLocation();
+    const navigate = useNavigate()
+    const [errorMessage, setErrorMessage] = useState(null);
     const handleLogin = (e) => {
         e.preventDefault();
         const form = e.target;
         const email = form.email.value;
         const password = form.password.value;
-        console.log(email, password)
+        // console.log(email, password)
         loginUser(email, password)
-        .then(res => {
-            console.log(res.user);
-        })
-        .catch(error => {
-            console.log(error);
-        })
+            .then(res => {
+                console.log(res.user);
+                fetch("http://localhost:3000/user/login", {
+                    method: "PUT",
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify(res.user)
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        Swal.fire({
+                            title: 'Successfully Logged In',
+                            text: 'Do you want to continue',
+                            icon: 'success',
+                            confirmButtonText: 'Done'
+                        });
+                        e.target.reset();
+                        navigate(location?.state ? location.state : "/");
+                    })
+            })
+            .catch(error => {
+                console.log(error);
+                setErrorMessage(error.message);
+            })
     }
     const handleGoogle = () => {
         googleSignIn()
-        .then(res => {
-            console.log(res.user)
-        })
-        .catch(error => {
-            console.log(error);
-        })
+            .then(res => {
+                console.log(res.user);
+                fetch("http://localhost:3000/users", {
+                    method: "PUT",
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify(res.user)
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        Swal.fire({
+                            title: 'Successfully Logged In',
+                            text: 'Do you want to continue',
+                            icon: 'success',
+                            confirmButtonText: 'Done'
+                        });
+                        // e.target.reset();
+                        navigate(location?.state ? location.state : "/");
+                    })
+            })
+            .catch(error => {
+                console.log(error);
+            })
     }
     return (
         <div>
@@ -56,6 +96,10 @@ const Login = () => {
 
                                 <div onClick={handleGoogle} className="btn btn-primary">Google Sign In</div>
                             </div>
+                            {
+                                errorMessage &&
+                                <p className='text-black'>{errorMessage}</p>
+                            }
                             <div><p>Don't have an account? <NavLink to={"/register"}>Register</NavLink></p></div>
                         </form>
                     </div>
