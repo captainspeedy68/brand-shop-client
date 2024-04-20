@@ -1,21 +1,24 @@
 import React, { Suspense } from "react";
 import {
   createBrowserRouter,
-  RouterProvider,
 } from "react-router-dom";
 import Description from "../cards/Description";
 import Loading from "../cards/Loading";
+const AddProduct = React.lazy(() => import("../pages/AddProduct"))
 const Root = React.lazy(() => import("../layout/Root"))
-import AddProduct from "../pages/AddProduct";
 import Comments from "../pages/Comments";
-import Details from "../pages/Details";
+// import Details from "../pages/Details";
 import Features from "../pages/Features";
 const Home = React.lazy(() => import("../pages/Home"));
 const Products = React.lazy(() => import("../pages/Products"));
-const DetailsRoot = React.lazy(() => import("../pages/DetailsRoot"));
+const MyCart = React.lazy(() => import("../pages/MyCart"));
 import Login from "../pages/Login";
-import MyCart from "../pages/MyCart";
+const DetailsRoot = React.lazy(() => import("../pages/DetailsRoot"));
+const Update = React.lazy(() => import("../pages/Update"));
+// import MyCart from "../pages/MyCart";
 import Register from "../pages/Register";
+import PrivateRout from "../providers/PrivateRout";
+// import Update from "../pages/Update";
 
 const router = createBrowserRouter([
   {
@@ -38,16 +41,31 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <Suspense fallback={<Loading></Loading>}>
-          <Login />
-        </Suspense>
+        <Login />
+      </Suspense>,
       },
       {
         path: "/mycart",
-        element: <MyCart></MyCart>
+        element: <PrivateRout><Suspense fallback={<Loading></Loading>}>
+        <MyCart/>
+      </Suspense></PrivateRout>,
+        loader: async () => {
+          try {
+            const response = await fetch(`http://localhost:3000/products`);
+            if (!response.ok) {
+              throw new Error('Failed to fetch product details');
+            }
+            return await response.json();
+          } catch (error) {
+            throw new Error(`Error fetching product details: ${error.message}`);
+          }
+        }
       },
       {
         path: "/addproduct",
-        element: <AddProduct></AddProduct>
+        element: <PrivateRout><Suspense fallback={<Loading></Loading>}>
+        <AddProduct/>
+      </Suspense></PrivateRout>
       },
       {
         path: "/register",
@@ -58,7 +76,7 @@ const router = createBrowserRouter([
         element: <Suspense fallback={<Loading></Loading>}>
           <Products />
         </Suspense>,
-        // loader: ({ params }) => fetch(`http://localhost:3000/brands/${params.brandName}`)
+
         loader: async ({ params }) => {
           try {
             const response = await fetch(`http://localhost:3000/brands/${params.brandName}`);
@@ -73,9 +91,9 @@ const router = createBrowserRouter([
       },
       {
         path: "/brands/products/:id/",
-        element: <Suspense fallback={<Loading></Loading>}>
-          <DetailsRoot />
-        </Suspense>,
+        element: <PrivateRout><Suspense fallback={<Loading></Loading>}>
+        <DetailsRoot/>
+      </Suspense></PrivateRout>,
         loader: async ({ params }) => {
           try {
             const response = await fetch(`http://localhost:3000/brands/products/${params.id}`);
@@ -103,6 +121,23 @@ const router = createBrowserRouter([
             element: <Comments></Comments>
           }
         ]
+      },
+      {
+        path: `/brands/products/update/:id/`,
+        element: <PrivateRout><Suspense fallback={<Loading></Loading>}>
+        <Update/>
+      </Suspense></PrivateRout>,
+        loader: async ({ params }) => {
+          try {
+            const response = await fetch(`http://localhost:3000/brands/products/${params.id}`);
+            if (!response.ok) {
+              throw new Error('Failed to fetch product details');
+            }
+            return await response.json();
+          } catch (error) {
+            throw new Error(`Error fetching product details: ${error.message}`);
+          }
+        },
       }
     ]
   },
