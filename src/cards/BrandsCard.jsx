@@ -11,7 +11,7 @@ const BrandsCard = ({ brand }) => {
     return (
         <NavLink to={`/brands/${brandName}`}>
             <div>
-                <div className="w-72 h-72 rounded-none shadow-md border border-red-100">
+                <div className="lg:w-72 lg:h-72 rounded-none shadow-md border border-red-100">
                     <figure><img className='h-48 w-full bg-red-300' src={image} alt="car!" /></figure>
                     <hr />
                     <div className="card-body">
