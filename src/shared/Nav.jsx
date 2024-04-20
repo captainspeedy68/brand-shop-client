@@ -1,21 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+import Loading from '../cards/Loading';
 import { AuthContext } from '../providers/AuthProvider';
+import 'react-toastify/dist/ReactToastify.css'
+
 
 const Nav = () => {
     const { logout, user } = useContext(AuthContext);
+    const notify = () => toast("User Logged Out!");
     const handleLogOut = () => {
         logout()
-            .then()
+            .then(() => {
+                notify();
+            })
             .catch(error => {
                 console.log(error);
             })
     }
-    // console.log(user?.email);
-    // console.log(user?.displayName);
-    // console.log(user?.photoURL);
-    
+    // const [isLoading, setIsLoading] = useState(false);
+
+    // const handleLoad = () => {
+    //     setIsLoading(false);
+    // }
     const links = <>
         <li><NavLink to={"/"}>Home</NavLink></li>
         <li><NavLink to={"/mycart"}>My Cart</NavLink></li>
@@ -34,7 +43,9 @@ const Nav = () => {
                         }
                     </ul>
                 </div>
-                <a className="btn btn-ghost text-xl">Automotive</a>
+                <a className="px-4 py-2 font-bold border-none text-xl text-[#FF5733] flex justify-around items-center md:bg-white rounded-full">
+                    <img className='h-10 w-10 mr-2 max-md:hidden' src='/brand.png'></img>
+                    <span className='uppercase'>Læraðr 2.0</span></a>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
@@ -47,19 +58,26 @@ const Nav = () => {
                 {
                     !user &&
                     <div>
-                        <NavLink to={"/login"}><button className="btn">Login</button></NavLink>
-                        <NavLink to={"/register"}><button className='btn mx-1'>Register</button></NavLink>
+                        <NavLink to={"/login"}><button className="border btn w-14 min-h-3 h-8 rounded-md p-2">Login</button></NavLink>
+                        <NavLink to={"/register"}><button className='border btn w-16 px-5 min-h-3 h-8 rounded-md mx-1'>Register</button></NavLink>
                     </div>
-                
+
                 }
                 {
                     user && <div className='flex justify-between align-middle items-center'><div className="avatar">
-                    <div className="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 mx-2">
-                      <img src={user?.photoURL} />
+
+                        {user?.photoURL &&
+                            <div className="rounded-full ring ring-error  ring-offset-base-100 h-12 w-12 ring-offset-2 mx-2">
+                                <img className='rounded-full' src={user?.photoURL} />
+                            </div>}
+                        {
+                            !user?.photoURL && <Loading></Loading>
+                        }
+
+
                     </div>
-                    <div className='text-center flex py-2 mr-4 h-full'>{user?.displayName}</div>
-                  </div>
-                    <button className="btn" onClick={handleLogOut}>Logout</button></div>
+                        <div className='text-center flex py-2 mr-4 h-full'>{user?.displayName}</div>
+                        <button className="border btn p-1 w-14 min-h-3 h-8 rounded-md" onClick={handleLogOut}>Logout</button></div>
                 }
             </div>
         </div>
