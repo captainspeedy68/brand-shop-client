@@ -5,7 +5,7 @@ import { Link, NavLink, Outlet, useLoaderData } from 'react-router-dom';
 import BtmNav from '../shared/BtmNav';
 
 const Details = ({product}) => {
-    console.log(product)
+    // console.log(product)
 
     // const product = useLoaderData();
     const { image,  name, _id: id, brandName, type, price, rating, shortDescription, features } = product;
