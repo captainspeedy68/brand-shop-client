@@ -13,7 +13,7 @@ const Home = () => {
 
     return (
         <div>
-            <div className='grid grid-cols-3 gap-x-10 gap-y-5 w-fit my-5 mx-auto'>
+            <div className='lg:grid grid-cols-3 gap-x-10 gap-y-5 w-fit my-5 mx-auto'>
                 {brands && brands.map(brand => (
                     <BrandsCard key={brand._id} brand={brand} />
                 ))}
