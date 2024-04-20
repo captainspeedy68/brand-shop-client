@@ -1,9 +1,9 @@
 import React from 'react';
 import { StarIcon } from 'daisyui';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 const ProductCard = ({ product }) => {
     const { image, name, brandName, _id: id, type, price, shortDescription, rating } = product
-    console.log(id);
+    // console.log(id);
     return (
         <div>
             <div className="hero my-5 shadow-lg shadow-red-100 text-left">
@@ -20,7 +20,12 @@ const ProductCard = ({ product }) => {
 
                             <p className="py-6 mr-2 font-semibold">{shortDescription}</p>
 
+                            <div>
+
                             <NavLink to={`/brands/products/${id}`}><button className="btn mx-3 rounded-none bg-red-500 text-white">Details</button></NavLink>
+                            <Link to={`/brands/products/update/${id}`}><button className="btn mx-3 rounded-none bg-red-500 text-white">Update</button></Link>
+                            </div>
+
                         </div>
                     </div>
                 </div>
